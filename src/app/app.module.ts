@@ -2,13 +2,17 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
+import {DragulaModule} from "ng2-dragula";
+import { PostsFormComponent } from './posts-form/posts-form.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    PostsFormComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    DragulaModule.forRoot(),
   ],
   providers: [],
   bootstrap: [AppComponent]
