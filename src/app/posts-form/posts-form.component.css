@@ -1,0 +1,20 @@
+
+.top-list {
+  height: 300px;
+  overflow-y: auto;
+}
+
+.items {
+  background: lightblue;
+
+}
+
+.items > li {
+  height: 30px;
+  border: 2px solid white;
+  padding: 40px 0;
+}
+
+.items > .items {
+  background-color: burlywood;
+}

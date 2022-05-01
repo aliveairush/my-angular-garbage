@@ -1,0 +1,53 @@
+<hr>
+<ul>
+  <li>
+    Hello
+    <ul>
+      <li>Test2</li>
+      <li>Test3</li>
+      <li>Test4</li>
+    </ul>
+  </li>
+  <li>Margo</li>
+  <li>Farfo</li>
+</ul>
+<h3> Dragula posts</h3>
+<div class="wrapper">
+  <ul class="items top-list"
+      [dragula]="GROUP_NAME"
+      [dragulaModel]='posts'
+      #myel
+  >
+
+    <ng-container
+      *ngTemplateOutlet="recursiveListTemplate; context: { data: posts} "
+    ></ng-container>
+  </ul>
+</div>
+
+
+
+<ng-template
+  #recursiveListTemplate
+  let-posts="data"
+>
+  <li
+    *ngFor="let post of posts"
+    class="__list-item"
+  >
+    {{post.name}}
+
+    <ul class="items"
+        *ngIf="post.children?.length"
+        [dragula]="GROUP_NAME"
+        [dragulaModel]='posts'
+    >
+
+      <ng-container
+        *ngTemplateOutlet="recursiveListTemplate; context: { data:  post.children} "
+      ></ng-container>
+    </ul>
+  </li>
+
+</ng-template>
+
