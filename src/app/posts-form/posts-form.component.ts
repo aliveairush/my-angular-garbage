@@ -1,5 +1,4 @@
 import {
-  AfterContentInit,
   AfterViewInit,
   Component,
   ElementRef, OnDestroy,
@@ -55,35 +54,36 @@ export class PostsFormComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dragAndDropSubscription = this.dragula.dropModel(this.DRAGULA_GROUP).subscribe((data) => {
       console.log("Changing data order", data);
     });
-
-
   }
 
   public trackByPostId: TrackByFunction<Post> = (index, post) => {
     return post.id
   }
 
-  ngAfterViewInit(): void {
-    // const drake = this.dragula.find(this.DRAGULA_GROUP).drake
-    // const drake = this.drake
+  @ViewChild("myListRoot")
+  myListRoot!: ElementRef
 
-    // autoScroll(
-    //   this.drake.containers,
-    //   {
-    //     margin: 30,
-    //     maxSpeed: 25,
-    //     scrollWhenOutside: true,
-    //     autoScroll: function () {
-    //       // if (this.down) console.log("Step1")
-    //       // if (drake.dragging) console.log("Step2")
-    //       return this.down && drake.dragging
-    //     }
-    //   }
-    // );
+  private scroll!: { destroy: Function }
+
+  ngAfterViewInit(): void {
+    const drake = this.drake
+
+    this.scroll = autoScroll(
+      this.myListRoot.nativeElement,
+      {
+        margin: 30,
+        maxSpeed: 25,
+        scrollWhenOutside: true,
+        autoScroll() {
+          return this.down && drake.dragging
+        }
+      }
+    );
   }
 
   ngOnDestroy(): void {
     this.dragAndDropSubscription.unsubscribe();
     this.dragula.destroy(this.DRAGULA_GROUP);
+    this.scroll.destroy();
   }
 }
