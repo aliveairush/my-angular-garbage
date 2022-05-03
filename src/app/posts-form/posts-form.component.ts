@@ -12,6 +12,7 @@ import {dragula, DragulaService} from "ng2-dragula";
 // @ts-ignore
 import autoScroll from 'dom-autoscroller';
 import {Subscription} from "rxjs";
+import {DrakeWithModels} from "ng2-dragula/dist/DrakeWithModels";
 
 export interface Post {
   id: number,
@@ -26,12 +27,15 @@ export interface Post {
 })
 export class PostsFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public DRAGULA_GROUP = "MY_GROUP"
+  public DRAGULA_GROUP = "MY_GROUP";
+  private drake!: DrakeWithModels;
 
   constructor(
     private postService: PostService,
     private dragula: DragulaService
   ) { }
+
+
 
   public posts: Array<Post> = new Array<Post>();
 
@@ -42,15 +46,16 @@ export class PostsFormComponent implements OnInit, AfterViewInit, OnDestroy {
       this.posts = posts
     });
 
-    this.dragula.createGroup(this.DRAGULA_GROUP, {
+    this.drake = this.dragula.createGroup(this.DRAGULA_GROUP, {
       // el - html элемент который мы двигаем, target- html контейнер куда мы переносим элемент, source - html контейнер откуда мы выносим элемент
       // Даем разрешение на перестановку если контейнер откуда берем элемент совпадает с контейнером куда кладем
       accepts:  (el, target, source) => target?.id === source?.id,
-    })
+    }).drake;
 
     this.dragAndDropSubscription = this.dragula.dropModel(this.DRAGULA_GROUP).subscribe((data) => {
       console.log("Changing data order", data);
-    })
+    });
+
 
   }
 
@@ -59,28 +64,26 @@ export class PostsFormComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    const drake = this.dragula.find(this.DRAGULA_GROUP).drake
+    // const drake = this.dragula.find(this.DRAGULA_GROUP).drake
+    // const drake = this.drake
 
-    console.log("drace", drake.containers);
-    autoScroll(
-      drake.containers,
-      {
-        margin: 30,
-        maxSpeed: 25,
-        scrollWhenOutside: true,
-        autoScroll: function () {
-          // if (this.down) console.log("Step1")
-          // if (drake.dragging) console.log("Step2")
-          return this.down && drake.dragging
-        }
-      }
-    );
+    // autoScroll(
+    //   this.drake.containers,
+    //   {
+    //     margin: 30,
+    //     maxSpeed: 25,
+    //     scrollWhenOutside: true,
+    //     autoScroll: function () {
+    //       // if (this.down) console.log("Step1")
+    //       // if (drake.dragging) console.log("Step2")
+    //       return this.down && drake.dragging
+    //     }
+    //   }
+    // );
   }
 
   ngOnDestroy(): void {
     this.dragAndDropSubscription.unsubscribe();
     this.dragula.destroy(this.DRAGULA_GROUP);
   }
-
-  // TODO dont forget to destroy scroll on ngOnDestroy
 }
