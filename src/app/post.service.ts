@@ -12,19 +12,23 @@ export class PostService {
     return new Promise(resolve => {
       setTimeout(() => {
         resolve([
-          {name: "Post1",
-            // children: [
-            // {name: "subPost1"},
-            // {name: "subPost2"},
-            // {name: "subPost3"},
-            // ]
+          {id: 1, name: "Post1",
+            children: [
+            {id: 11,name: "subPost11"},
+            {id: 12,name: "subPost12"},
+            {id: 13,name: "subPost13"},
+            ]
           },
-          {name: "Post2"},
-          {name: "Post3"},
-          {name: "Post4"},
-          {name: "Post5"},
-          {name: "Post6"},
-          {name: "Post7"},
+          {id: 2, name: "Post2",children: [
+              {id: 21,name: "subPost21"},
+              {id: 22,name: "subPost22"},
+              {id: 23,name: "subPost23"},
+            ]},
+          {id: 3,name: "Post3"},
+          {id: 4,name: "Post4"},
+          {id: 5,name: "Post5"},
+          {id: 6,name: "Post6"},
+          {id: 7,name: "Post7"},
         ])
       }, 1500)
     })

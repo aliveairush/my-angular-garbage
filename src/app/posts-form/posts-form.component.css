@@ -1,20 +1,26 @@
 
 .top-list {
-  height: 300px;
+  height: 500px;
   overflow-y: auto;
+  border: 3px solid gray;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
 .items {
-  background: lightblue;
-
+  color: white;
 }
 
 .items > li {
-  height: 30px;
-  border: 2px solid white;
-  padding: 40px 0;
+  padding: 40px 20px;
+  background: #A85CF9;
+  margin: 0 0 20px 0;
 }
 
-.items > .items {
-  background-color: burlywood;
+.items > li > .items > li{
+  background-color: #5534A5;
 }

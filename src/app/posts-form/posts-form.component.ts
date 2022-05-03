@@ -1,11 +1,20 @@
-import {AfterContentInit, AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ElementRef, OnDestroy,
+  OnInit,
+  TrackByFunction,
+  ViewChild
+} from '@angular/core';
 import {PostService} from "../post.service";
-import { DragulaService} from "ng2-dragula";
+import {dragula, DragulaService} from "ng2-dragula";
 // @ts-ignore
 import autoScroll from 'dom-autoscroller';
 import {Subscription} from "rxjs";
 
 export interface Post {
+  id: number,
   name: string,
   children?: Array<Post>
 }
@@ -15,45 +24,46 @@ export interface Post {
   templateUrl: './posts-form.component.html',
   styleUrls: ['./posts-form.component.css']
 })
-export class PostsFormComponent implements OnInit, AfterViewInit {
+export class PostsFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public GROUP_NAME = "MY_GROUP"
+  public DRAGULA_GROUP = "MY_GROUP"
 
-  constructor(private postService: PostService, private dragula: DragulaService) { }
+  constructor(
+    private postService: PostService,
+    private dragula: DragulaService
+  ) { }
 
   public posts: Array<Post> = new Array<Post>();
 
   private dragAndDropSubscription!: Subscription;
-
-
-  @ViewChild('myel')
-  elem!: ElementRef<HTMLElement>
-
 
   ngOnInit(): void {
     this.postService.fetchData().then((posts) => {
       this.posts = posts
     });
 
-    this.dragula.createGroup(this.GROUP_NAME, {
-      // Проверка можем ли мы дропнуть элемент
-      // el - элемент который мы двигаем, target- контейнер куда мы переносим элемент, source - контейнер откуда мы выносим элемент
+    this.dragula.createGroup(this.DRAGULA_GROUP, {
+      // el - html элемент который мы двигаем, target- html контейнер куда мы переносим элемент, source - html контейнер откуда мы выносим элемент
+      // Даем разрешение на перестановку если контейнер откуда берем элемент совпадает с контейнером куда кладем
       accepts:  (el, target, source) => target?.id === source?.id,
     })
 
-    this.dragAndDropSubscription = this.dragula.dropModel(this.GROUP_NAME).subscribe((data) => {
+    this.dragAndDropSubscription = this.dragula.dropModel(this.DRAGULA_GROUP).subscribe((data) => {
       console.log("Changing data order", data);
     })
 
   }
 
+  public trackByPostId: TrackByFunction<Post> = (index, post) => {
+    return post.id
+  }
+
   ngAfterViewInit(): void {
-    const drake = this.dragula.find(this.GROUP_NAME).drake
+    const drake = this.dragula.find(this.DRAGULA_GROUP).drake
 
     console.log("drace", drake.containers);
     autoScroll(
       drake.containers,
-      // this.elem.nativeElement,
       {
         margin: 30,
         maxSpeed: 25,
@@ -65,6 +75,11 @@ export class PostsFormComponent implements OnInit, AfterViewInit {
         }
       }
     );
+  }
+
+  ngOnDestroy(): void {
+    this.dragAndDropSubscription.unsubscribe();
+    this.dragula.destroy(this.DRAGULA_GROUP);
   }
 
   // TODO dont forget to destroy scroll on ngOnDestroy

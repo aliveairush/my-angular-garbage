@@ -1,22 +1,9 @@
-<hr>
-<ul>
-  <li>
-    Hello
-    <ul>
-      <li>Test2</li>
-      <li>Test3</li>
-      <li>Test4</li>
-    </ul>
-  </li>
-  <li>Margo</li>
-  <li>Farfo</li>
-</ul>
+
 <h3> Dragula posts</h3>
 <div class="wrapper">
   <ul class="items top-list"
-      [dragula]="GROUP_NAME"
+      [dragula]="DRAGULA_GROUP"
       [dragulaModel]='posts'
-      #myel
   >
 
     <ng-container
@@ -32,14 +19,15 @@
   let-posts="data"
 >
   <li
-    *ngFor="let post of posts"
+    *ngFor="let post of posts; trackBy: trackByPostId"
     class="__list-item"
   >
     {{post.name}}
 
     <ul class="items"
         *ngIf="post.children?.length"
-        [dragula]="GROUP_NAME"
+        [dragula]="DRAGULA_GROUP"
+        [attr.id]="post.id"
         [dragulaModel]='posts'
     >
 
