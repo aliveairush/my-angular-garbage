@@ -6,12 +6,14 @@ import {DragulaModule} from "ng2-dragula";
 import { PostsFormComponent } from './posts-form/posts-form.component';
 import {AppRoutingModule} from "./app-routing.module";
 import { LifeCycleComponent } from './life-cycle/life-cycle.component';
+import { AutoscrollExampleComponent } from './autoscroll-example/autoscroll-example.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PostsFormComponent,
-    LifeCycleComponent
+    LifeCycleComponent,
+    AutoscrollExampleComponent
   ],
   imports: [
     BrowserModule,
