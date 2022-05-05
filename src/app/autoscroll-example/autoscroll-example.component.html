@@ -1,0 +1,42 @@
+
+<h3> Dragula posts but with my own autoscroll</h3>
+<div class="wrapper">
+  <ul class="items top-list"
+      [dragula]="DRAGULA_GROUP"
+      [dragulaModel]='posts'
+      #listContainer
+  >
+
+    <ng-container
+      *ngTemplateOutlet="recursiveListTemplate; context: { data: posts} "
+    ></ng-container>
+  </ul>
+</div>
+
+
+
+<ng-template
+  #recursiveListTemplate
+  let-posts="data"
+>
+  <li
+    *ngFor="let post of posts; trackBy: trackByPostId"
+    class="__list-item"
+  >
+    {{post.name}}
+
+    <ul class="items"
+        *ngIf="post.children?.length"
+        [dragula]="DRAGULA_GROUP"
+        [attr.id]="post.id"
+        [dragulaModel]='posts'
+    >
+
+      <ng-container
+        *ngTemplateOutlet="recursiveListTemplate; context: { data:  post.children} "
+      ></ng-container>
+    </ul>
+  </li>
+
+</ng-template>
+
