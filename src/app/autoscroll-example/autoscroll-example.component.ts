@@ -68,58 +68,51 @@ export class AutoscrollExampleComponent implements OnInit , OnDestroy{
   public trackByPostId: TrackByFunction<Post> = (index, post) => {
     return post.id
   }
+
   // => CODE  FOR AUTO-SCROLLING =>
   @ViewChild('listContainer')
   listContainer!: ElementRef;
 
-  private DRAG_SCROLL_DISTANCE = 25;
+  private DRAG_SCROLL_DISTANCE = 20;
 
-  private animation!: number | null;
-
-  private lastTime: number | null = null;
+  private scrollingAnimation!: number | null;
 
   // 1  = scroll down, -1  = scroll top
   private scrollDirection: 1 | -1  = 1;
 
-
-  /*
-       Функция высчитывает наименьшее и наибольшее значение Y у контейнера (faq list)
-       Если позиции мыши по Y меньше наименьшей позиции Y контейнера, то выполняем scroll наверх.
-       Если позиции мыши по Y больше наибольшей позиции Y контейнера, то выполняем scroll вниз.
-       Если позиции мыши по Y входит в контейнер, то останавливаем scroll.
-   */
+  /*  Функция высчитывает наименьшее и наибольшее значение Y у контейнера (faq list)
+    Если позиции мыши по Y меньше наименьшей позиции Y контейнера, то выполняем scroll наверх.
+    Если позиции мыши по Y больше наибольшей позиции Y контейнера, то выполняем scroll вниз.
+    Если позиции мыши по Y входит в контейнер, то останавливаем scroll. */
   private handleMouseMoveFaqList = (e: MouseEvent) =>  {
     const offsetTop = this.listContainer.nativeElement.offsetTop;
     const offsetHeight = this.listContainer.nativeElement.offsetHeight;
 
-    if (e.pageY <  offsetTop) { // Если курсор выше контейнера
-      this.scrollDirection = -1; // scroll top
-      this.animation = requestAnimationFrame(this.scrollFaqList);
-    } else if (e.pageY > offsetTop + offsetHeight) { // Если курсор ниже контейнера
-      this.scrollDirection = 1; // scroll down
-      this.animation = requestAnimationFrame(this.scrollFaqList);
-    } else {
+    // -1 пиксель нужен чтобы скролилось и в полноэкранном режиме
+    const isCursorBelowContainer = e.pageY >= offsetTop + offsetHeight - 1;
+    const isCursorAboveContainer = e.pageY < offsetTop;
+    const isCursorInContainer = !isCursorAboveContainer && !isCursorBelowContainer;
+
+    // Если происходит scroll и курсор в рамках контейнера, то остановка scroll
+    if (this.scrollingAnimation && isCursorInContainer) {
       this.stopScrolling();
+    } else if ( isCursorAboveContainer || isCursorBelowContainer ) {
+      if (!this.scrollingAnimation) { // Если нет анимации значит нужно навесить
+        // Если курсор выше контейнера -1 иначе ниже контейнера значит 1
+        this.scrollDirection = isCursorAboveContainer ? -1 : 1;
+        this.scrollingAnimation = requestAnimationFrame(this.scrollFaqList);
+      }
     }
   }
 
-  private scrollFaqList = (time: number) =>  {
-    if (this.animation) {
-      // Если lastTime не установлен или прошло больше 16 мили секунд, то проскролить компонент
-      if (!this.lastTime || time - this.lastTime >= 1000 / 60) {
-        this.lastTime = time;
-        this.listContainer.nativeElement.scrollBy({ top: this.scrollDirection * this.DRAG_SCROLL_DISTANCE });
-      }
-      this.animation = requestAnimationFrame(this.scrollFaqList);
-    }
+  private scrollFaqList = () =>  {
+    this.listContainer.nativeElement.scrollBy({ top: this.scrollDirection * this.DRAG_SCROLL_DISTANCE });
+    this.scrollingAnimation = requestAnimationFrame(this.scrollFaqList);
   }
 
   private stopScrolling() {
-    cancelAnimationFrame(this.animation as number);
-    this.animation = null;
-    this.lastTime = null;
+    cancelAnimationFrame(this.scrollingAnimation as number);
+    this.scrollingAnimation = null;
   }
   /* <= CODE FOR AUTO-SCROLLING <=  */
-
-
 }
