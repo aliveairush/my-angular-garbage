@@ -29,6 +29,11 @@ export class PostService {
           {id: 5,name: "Post5"},
           {id: 6,name: "Post6"},
           {id: 7,name: "Post7"},
+          {id: 8,name: "Post8"},
+          {id: 9,name: "Post9"},
+          {id: 100,name: "Post10"},
+          {id: 101,name: "Post11"},
+          {id: 102,name: "Post12"},
         ])
       }, 1500)
     })
